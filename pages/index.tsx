@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 import { useAuthenticator } from "@aws-amplify/ui-react";
+import Link from 'next/link'
+
+import { Button } from "@/components/ui/button"
 
 const client = generateClient<Schema>();
 
@@ -31,9 +34,27 @@ export default function App() {
   }
 
   return (
-    <main>
+    <main className="bg-pink-500">
       <h1>{user?.signInDetails?.loginId} todos</h1>
+      <ul>
+        <li>
+          <Button asChild>
+            <Link href="/chat">Chat</Link>
+          </Button>
+        </li>
+        <li>
+          <Button asChild>
+            <Link href="/dashboard">Dashboard</Link>
+          </Button>
+        </li>
+        <li>
+          <Button asChild>
+            <Link href="/setting">Setting</Link>
+          </Button>
+        </li>
+      </ul>
       <h1>My todos</h1>
+      <h1 className="text-3xl font-bold underline">Hello, Next.js!</h1>
       <button onClick={createTodo}>+ new</button>
       <ul>
         {todos.map((todo) => (
