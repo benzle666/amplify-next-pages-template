@@ -4,7 +4,7 @@ import type { Schema } from "@/amplify/data/resource";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import Link from 'next/link'
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/Button"
 
 const client = generateClient<Schema>();
 
@@ -39,7 +39,7 @@ export default function App() {
       <ul>
         <li>
           <Button asChild>
-            <Link href="/chat">Chat</Link>
+            <Link href="/practice">Practice</Link>
           </Button>
         </li>
         <li>
