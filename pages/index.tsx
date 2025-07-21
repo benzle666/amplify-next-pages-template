@@ -4,7 +4,7 @@ import type { Schema } from "@/amplify/data/resource";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import Link from 'next/link'
 
-import { Button } from "@/components/ui/Button"
+import { Button } from "@/components/ui/Buttons"
 
 const client = generateClient<Schema>();
 
