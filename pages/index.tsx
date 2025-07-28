@@ -33,6 +33,11 @@ export default function App() {
     client.models.Todo.delete({ id })
   }
 
+  client.queries.sayHello({ name: 'Amplify' })
+  .then(apiResult => {
+    console.log(apiResult)
+  })
+
   return (
     <main className="bg-pink-500">
       <h1>{user?.signInDetails?.loginId} todos</h1>
