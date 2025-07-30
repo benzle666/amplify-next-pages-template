@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { RealtimeAgent, RealtimeSession} from '@openai/agents/realtime';
-import { z } from 'zod';
+import { generateClient } from "aws-amplify/data";
+import type { Schema } from "@/amplify/data/resource";
+
 
 import ToggleSwitch from "@/components/ui/ToggleSwitch";
 import Body from "@/components/layout/Body";
@@ -9,11 +11,26 @@ import Header from "@/components/layout/Header";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@aws-amplify/ui-react";
 
+const client = generateClient<Schema>();
+
 let session: RealtimeSession | null = null;
 
+const getKey = () => {
+  return client.queries.sayHello({ name: 'Amplify' })
+    .then(apiResult => {
+      if (apiResult.data) {
+        return JSON.parse(apiResult.data)
+      } else {
+        console.error("No data in apiResult");
+      }
+    })
+    .catch(err => {
+      console.error("Error fetching key:", err);
+    });
+}
+
 const getSession = async (agentSelected: string) => {
-  const res = await fetch('/api/session');
-  const data = await res.json();
+  const data = await getKey();
 
   let agent: RealtimeAgent;
 
@@ -49,6 +66,7 @@ const getSession = async (agentSelected: string) => {
     apiKey: data.client_secret.value,
   });
 };
+
 const endSession = () => {
   if (session) {
     session.close();
@@ -69,7 +87,6 @@ export default function PracticePage() {
     endSession();
     setActive(false);
   };
-
 
   return (
     <Layout>
