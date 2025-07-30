@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { RealtimeAgent, RealtimeSession} from '@openai/agents/realtime';
 import { generateClient } from "aws-amplify/data";
+import { RealtimeAgent, RealtimeSession } from "@openai/agents/realtime";
 import type { Schema } from "@/amplify/data/resource";
 
 
@@ -11,12 +11,14 @@ import Header from "@/components/layout/Header";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@aws-amplify/ui-react";
 
+import { CasualPrompt, IELTSPrompt, TOEICPrompt } from '@/services/prompts/realtimePrompts'
+
+
+// Emphemeral key
 const client = generateClient<Schema>();
 
-let session: RealtimeSession | null = null;
-
-const getKey = () => {
-  return client.queries.sayHello({ name: 'Amplify' })
+const getKey = async () => {
+  return client.queries.getEmphemeral({ name: 'Amplify' })
     .then(apiResult => {
       if (apiResult.data) {
         return JSON.parse(apiResult.data)
@@ -29,6 +31,9 @@ const getKey = () => {
     });
 }
 
+// Realtime API
+let session: RealtimeSession | null = null;
+
 const getSession = async (agentSelected: string) => {
   const data = await getKey();
 
@@ -39,7 +44,7 @@ const getSession = async (agentSelected: string) => {
       agent = new RealtimeAgent({
         name: 'IELTS Examiner',
         instructions:
-          'You are an IELTS Examiner who prompts the user with questions and guides them through the test using a structure similar to the real IELTS exam. You provide scores and feedback at the end.',
+          IELTSPrompt,
       });
       break;
 
@@ -47,7 +52,7 @@ const getSession = async (agentSelected: string) => {
       agent = new RealtimeAgent({
         name: 'TOEIC Examiner',
         instructions:
-          'You are a TOEIC Examiner who prompts the user with questions and guides them through a TOEIC-style test, providing scores and feedback at the end.',
+          TOEICPrompt,
       });
       break;
 
@@ -56,7 +61,7 @@ const getSession = async (agentSelected: string) => {
       agent = new RealtimeAgent({
         name: 'Conversation Tutor',
         instructions:
-          'You are a helpful tutor who helps the user practice their conversation skills in a casual setting.',
+          CasualPrompt,
       });
       break;
   }

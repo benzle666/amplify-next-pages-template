@@ -1,7 +1,7 @@
 import type { Schema } from "../../data/resource"
-import { env } from '$amplify/env/say-hello';
+import { env } from '$amplify/env/get-emphemeral';
 
-export const handler: Schema["sayHello"]["functionHandler"] = async (event) => {
+export const handler: Schema["getEmphemeral"]["functionHandler"] = async (event) => {
   // arguments typed from `.arguments()`
   const { name } = event.arguments
 
@@ -29,5 +29,3 @@ export const handler: Schema["sayHello"]["functionHandler"] = async (event) => {
   }
 
 }
-
-
