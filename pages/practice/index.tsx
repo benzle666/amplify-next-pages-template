@@ -4,12 +4,14 @@ import { RealtimeAgent, RealtimeSession } from "@openai/agents/realtime";
 import type { Schema } from "@/amplify/data/resource";
 
 
+
 import ToggleSwitch from "@/components/ui/ToggleSwitch";
 import Body from "@/components/layout/Body";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import Layout from "@/components/layout/Layout";
-import { Button } from "@aws-amplify/ui-react";
+import { Button } from "@/components/ui/button";
+import Modal from "@/components/ui/Model";
 
 import { CasualPrompt, IELTSPrompt, TOEICPrompt } from '@/services/prompts/realtimePrompts'
 
@@ -34,10 +36,18 @@ const getKey = async () => {
 // Realtime API
 let session: RealtimeSession | null = null;
 
-const getSession = async (agentSelected: string) => {
+type sessionArg = {
+  agentSelected: string, 
+  voiceSelected: string, 
+  speedSelected: string
+}
+
+const getSession = async ({ agentSelected, voiceSelected, speedSelected }: sessionArg) => {
   const data = await getKey();
 
   let agent: RealtimeAgent;
+  let agentVoice: string;
+  let agentSpeed: number;
 
   switch (agentSelected) {
     case 'IELTS-Style':
@@ -66,9 +76,60 @@ const getSession = async (agentSelected: string) => {
       break;
   }
 
-  session = new RealtimeSession(agent);
+  switch (voiceSelected) {
+    case 'Alloy':
+      agentVoice = 'alloy';
+      break;
+    case 'Ash':
+      agentVoice = 'ash';
+      break;
+    case 'Ballad':
+      agentVoice = 'ballad';
+      break;
+    case 'Coral':
+      agentVoice = 'coral';
+      break;
+    case 'Echo':
+      agentVoice = 'echo';
+      break;
+    case 'Sage':
+      agentVoice = 'sage';
+      break;
+    case 'Shimmer':
+      agentVoice = 'shimmer';
+      break;
+    case 'Verse':
+      agentVoice = 'verse';
+      break;
+    default:
+      agentVoice = 'alloy';
+      break;
+  }
+
+  switch (speedSelected) {
+    case 'Fast':
+      agentSpeed = 1.25;
+      break;
+    case 'Normal':
+      agentSpeed = 1;
+      break;
+    case 'Slow':
+      agentSpeed = 0.75;
+      break;
+    default:
+      agentSpeed = 1;
+
+  }
+
+  session = new RealtimeSession(agent, {
+    config: {
+      speed: agentSpeed,
+      voice: agentVoice,
+    }
+  });
+
   await session.connect({
-    apiKey: data.client_secret.value,
+    apiKey: data.client_secret?.value,
   });
 };
 
@@ -82,9 +143,12 @@ const endSession = () => {
 export default function PracticePage() {
   const [active, setActive] = useState(false);
   const [agentSelected, setAgent] = useState('Casual');
+  const [voiceSelected, setVoice] = useState('Alloy');
+  const [speedSelected, setSpeed] = useState('Normal');
+  const [isModalOpen, setModalOpen] = useState(false)
 
   const handleStart = async () => {
-    await getSession(agentSelected);
+    await getSession({ agentSelected, voiceSelected, speedSelected });
     setActive(true);
   };
 
@@ -98,16 +162,46 @@ export default function PracticePage() {
       <Header pageTitle="Practice"/>
       <Body>
         <ToggleSwitch
+          layoutIdPrefix="agent"
           options={['Casual', 'IELTS-Style', 'TOEIC-Style']}
           value={agentSelected}
           onChange={setAgent}
         />
-        <Button onClick={handleStart} isDisabled={active}>
+        <Button onClick={handleStart} disabled={active}>
           Start Session
         </Button>
-        <Button onClick={handleStop} isDisabled={!active}>
+        <Button>
+          Move on
+        </Button>
+        <Button onClick={handleStop} disabled={!active}>
           End Session
         </Button>
+
+        <Button
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          onClick={() => setModalOpen(true)}
+        >
+          Setting
+        </Button>
+        <Modal
+          isOpen={isModalOpen}
+          onClose={() => setModalOpen(false)}
+          title="Welcome"
+        >
+          <p className="text-sm text-gray-700">This is a reusable modal built with TypeScript.</p>
+          <ToggleSwitch
+            layoutIdPrefix="voice"
+            options={['Alloy', 'Ash', 'Ballad', 'Coral', 'Echo', 'Sage', 'Shimmer', 'Verse']}
+            value={voiceSelected}
+            onChange={setVoice}
+          />
+          <ToggleSwitch
+            layoutIdPrefix="speed"
+            options={['Slow', 'Normal', 'Fast']}
+            value={speedSelected}
+            onChange={setSpeed}
+          />
+        </Modal>
       </Body>
     </Layout>
   );

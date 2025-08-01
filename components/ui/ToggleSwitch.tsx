@@ -2,19 +2,35 @@ import { motion } from 'framer-motion';
 
 // Usage
 // const [selected, setSelected] = useState('GPT-4');
-{/* <ToggleSwitch
-    options={['GPT-4', 'Claude', 'Gemini', 'Custom']}
-    value={selected}
-    onChange={setSelected}
-/> */}
+{/* 
+<ToggleSwitch
+  layoutIdPrefix="model"
+  options={['GPT-4', 'Claude', 'Gemini', 'Custom']}
+  value={selectedModel}
+  onChange={setSelectedModel}
+/>
+<ToggleSwitch
+  layoutIdPrefix="engine"
+  options={['Fast', 'Balanced', 'Accurate']}
+  value={selectedEngine}
+  onChange={setSelectedEngine}
+/>
+
+*/}
 
 interface ToggleSwitchProps {
   options: string[];
   value: string;
   onChange: (value: string) => void;
+  layoutIdPrefix?: string; // <-- NEW
 }
 
-export default function ToggleSwitch({ options, value, onChange }: ToggleSwitchProps) {
+export default function ToggleSwitch({
+  options,
+  value,
+  onChange,
+  layoutIdPrefix = 'toggle',
+}: ToggleSwitchProps) {
   return (
     <div className="relative flex items-center bg-gray-200 rounded-full p-1 w-fit">
       {options.map((option) => {
@@ -24,7 +40,7 @@ export default function ToggleSwitch({ options, value, onChange }: ToggleSwitchP
           <div key={option} className="relative">
             {isSelected && (
               <motion.div
-                layoutId="toggle-pill"
+                layoutId={`${layoutIdPrefix}-pill`} // <-- make it unique
                 className="absolute inset-0 bg-blue-500 rounded-full z-0"
                 transition={{
                   type: 'spring',

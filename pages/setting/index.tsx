@@ -3,12 +3,43 @@ import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import Layout from "@/components/layout/Layout";
 
+import PricingPanel , { PricingPlan } from "@/components/ui/PricingPanel";
+
+const plans: PricingPlan[] = [
+  {
+    name: 'Starter',
+    price: '$9/mo',
+    description: 'Great for personal use',
+    features: ['1 Website', 'Email Support', 'Basic Analytics'],
+  },
+  {
+    name: 'Pro',
+    price: '$29/mo',
+    description: 'Perfect for growing teams',
+    features: ['5 Websites', 'Priority Support', 'Advanced Analytics'],
+    isPopular: true,
+    ctaText: 'Choose Pro',
+    onCTAClick: () => alert('Pro plan selected!'),
+  },
+  {
+    name: 'Enterprise',
+    price: 'Contact Us',
+    description: 'Custom solutions for large organizations',
+    features: ['Unlimited Websites', 'Dedicated Support', 'Custom Integrations'],
+    ctaText: 'Contact Sales',
+  },
+]
+
 export default function SettingPage() {
   return (
     <Layout>
       <Header pageTitle="Setting"/>
       <Body>
         <div className="space-y-6">
+
+          {/* Pricing plan */}
+          <PricingPanel plans={plans} />
+
 
           {/* Dark Mode Toggle */}
           <div className="flex items-center justify-between p-4 border rounded-lg">

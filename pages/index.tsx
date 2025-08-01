@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "@/amplify/data/resource";
 import { useAuthenticator } from "@aws-amplify/ui-react";
-import Link from 'next/link'
+import Link from 'next/link';
 
-import { Button } from "@/components/ui/Buttons"
+import { Button } from "@/components/ui/button";
+import Modal from "@/components/ui/Model";
 
 const client = generateClient<Schema>();
 
