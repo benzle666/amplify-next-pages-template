@@ -1,19 +1,28 @@
 // import "@/styles/app.css";
 import '@/styles/globals.css'
+import type { ReactElement, ReactNode } from 'react'
+import { NextPage } from 'next';
 import type { AppProps } from "next/app";
-import { Amplify } from "aws-amplify";
-import outputs from "@/amplify_outputs.json";
-import "@aws-amplify/ui-react/styles.css";
+import Head from 'next/head';
 
-import { Authenticator } from '@aws-amplify/ui-react'
-import '@aws-amplify/ui-react/styles.css'
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode
+}
 
-Amplify.configure(outputs);
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout
+}
 
-export default function App({ Component, pageProps }: AppProps) {
-  return (
-    <Authenticator>
+export default function App({ Component, pageProps }: AppPropsWithLayout) {
+  const getLayout = Component.getLayout ?? ((page) => page)
+
+  return getLayout(
+    <>
+      <Head>
+        <title>TalkAura</title>
+        <link rel="icon" href="/logo.png" />
+      </Head>
       <Component {...pageProps} />
-    </Authenticator>
+    </>
   );
 }

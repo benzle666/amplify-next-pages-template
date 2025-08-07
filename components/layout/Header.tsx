@@ -1,39 +1,27 @@
-import { Settings, Menu } from "lucide-react";
 import User from "../ui/User";
 import Link from "next/link";
-import { useState } from "react";
+import Image from "next/image";
 
-type HeaderProps = {
-  pageTitle: string;
-};
-
-export default function Header({ pageTitle }: HeaderProps) {
+export default function Header() {
 
   return (
     <header className="flex items-center justify-between px-4 py-3 border-b sm:px-6">
-      {/* Left: App name + separator + page title */}
-      <Link
-        href="/dashboard"
-        className="text-xl font-bold bg-gradient-to-r from-yellow-500 to-red-500 bg-clip-text text-transparent"
-      >
-        Talkaura
-      </Link>
-
-
-
-
+      {/* Left: App name*/}
+      <div className="flex items-center">
+        <Image src="/logo.png" alt="/" width={60} height={60}/>
+        <Link
+          href="/user/practice"
+          className="text-xl font-bold bg-gradient-to-r from-yellow-500 to-red-500 bg-clip-text text-transparent"
+        >
+          Talkaura
+        </Link>
+      </div>
 
       {/* Right side */}
       <div className="flex items-center">
         {/* Desktop view: User + Settings */}
         <div className="hidden sm:flex items-center gap-2">
-          <Link href="/dashboard" className="px-4">
-            Dashboard
-          </Link>
-          <Link href="/practice" className="px-4">
-            Practice
-          </Link>
-          <Link href="/setting" className="px-4">
+          <Link href="/user/setting" className="px-4">
             Setting
           </Link>
           <div className="px-4">
