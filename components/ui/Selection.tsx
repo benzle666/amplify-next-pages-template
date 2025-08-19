@@ -33,11 +33,11 @@ export default function Selection({
   onChange,
 }: SelectProps) {
   const [open, setOpen] = useState(false)
-
-  // Create a ref to the entire dropdown wrapper
+  const [dropUp, setDropUp] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
 
-  // Add outside click detection
+  // Detect outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -47,12 +47,27 @@ export default function Selection({
         setOpen(false)
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside)
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
     }
   }, [])
+
+  // Detect whether to open dropdown up or down
+  useEffect(() => {
+    if (!open || !buttonRef.current) return
+
+    const rect = buttonRef.current.getBoundingClientRect()
+    const spaceBelow = window.innerHeight - rect.bottom
+    const spaceAbove = rect.top
+
+    // assume max 200px menu height
+    if (spaceBelow < 200 && spaceAbove > spaceBelow) {
+      setDropUp(true)
+    } else {
+      setDropUp(false)
+    }
+  }, [open])
 
   const toggleOption = (value: string) => {
     if (multiple) {
@@ -70,13 +85,13 @@ export default function Selection({
   }
 
   return (
-    // Apply the ref to this wrapper
     <div ref={dropdownRef} className="relative inline-block text-left min-w-[140px]">
       <div>
         <button
+          ref={buttonRef}
           type="button"
           onClick={() => setOpen(!open)}
-          className="inline-flex justify-between items-center w-full rounded-full border border-gray-200 shadow-sm px-4 py-1.5 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none"
+          className="inline-flex h-10 justify-between items-center w-full rounded-full border border-gray-200 shadow-sm px-4 py-1.5 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none"
         >
           {multiple
             ? (selected as string[]).length > 0
@@ -100,7 +115,11 @@ export default function Selection({
       </div>
 
       {open && (
-        <div className="z-10 absolute mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+        <div
+          className={`z-10 absolute w-full rounded-md shadow-lg bg-white ring-1 ring-gray-200 ring-opacity-5 ${
+            dropUp ? "bottom-full mb-2" : "mt-2"
+          }`}
+        >
           <ul className="py-1 text-sm text-gray-700 max-h-60 overflow-auto">
             {options.map((opt) => (
               <li
@@ -124,6 +143,7 @@ export default function Selection({
     </div>
   )
 }
+
 
 // Usage Guide
 // import { useState } from "react"

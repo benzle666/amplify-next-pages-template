@@ -1,5 +1,6 @@
 import { ReactElement } from "react";
 import type { NextPageWithLayout } from '@/pages/_app';
+import Link from "next/link";
 
 
 import MyAuth from '@/components/layout/MyAuth';
@@ -44,7 +45,9 @@ const SettingPage: NextPageWithLayout = () => {
 
   return (
     <Layout>
-      <Header/>
+      <Header>
+        <Link href="/user/practice">Practice</Link>
+      </Header>
       <Body>
         <div className="space-y-6">
 

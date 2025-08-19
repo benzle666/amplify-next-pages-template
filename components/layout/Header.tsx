@@ -2,7 +2,7 @@ import User from "../ui/User";
 import Link from "next/link";
 import Image from "next/image";
 
-export default function Header() {
+export default function Header({ children } : { children : React.ReactNode }) {
 
   return (
     <header className="flex items-center justify-between px-4 py-3 border-b sm:px-6">
@@ -21,9 +21,7 @@ export default function Header() {
       <div className="flex items-center">
         {/* Desktop view: User + Settings */}
         <div className="hidden sm:flex items-center gap-2">
-          <Link href="/user/setting" className="px-4">
-            Setting
-          </Link>
+          {children}
           <div className="px-4">
             <User name="khoinguyenbenz@gmail.com"/>
           </div>
@@ -31,12 +29,7 @@ export default function Header() {
 
         {/* Mobile view: dropdown */}
         <div className="relative sm:hidden">
-            <Link
-              href="/setting"
-              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            >
-              Settings
-            </Link>
+          {children}
         </div>
       </div>
     </header>

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { Play, RedoDot, CircleQuestionMark } from "lucide-react"
+import { Play, SkipForward, CircleQuestionMark, SkipBack, GraduationCap } from "lucide-react"
 
 
 type Props = {
@@ -7,6 +7,8 @@ type Props = {
     onNext: () => void
     onStop: () => void
     onSettings: () => void
+    onRepeat: () => void
+    onAssess: () => void
     active: boolean
 }
 
@@ -15,6 +17,8 @@ export default function SessionControls({
     onNext,
     onStop,
     onSettings,
+    onRepeat,
+    onAssess,
     active,
 }: Props) {
 
@@ -27,11 +31,26 @@ return (
                 variant="ghost"
                 size="icon"
                 onClick={onSettings}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-600 hover:text-black"
             >
                 <div className="flex flex-col items-center">
                     <CircleQuestionMark />
                     <p className="text-xs mt-1">Guide</p>
+                </div>
+            </Button>
+        </div>
+
+        {/* Back Button */}
+        <div className="flex h-full justify-center items-center w-20">
+            <Button
+                variant="ghost"
+                size="icon"
+                onClick={onRepeat}
+                className="text-gray-600 hover:text-black"
+            >
+                <div className="flex flex-col items-center">
+                    <SkipBack />
+                    <p className="text-xs mt-1">Repeat</p>
                 </div>
             </Button>
         </div>
@@ -45,7 +64,7 @@ return (
                 >
                     {active ? (
                         <div className="flex flex-col items-center">
-                            <RedoDot />
+                            <SkipForward />
                             <p className="text-xs mt-1">Next</p>
                         </div>
                     ) : (
@@ -58,13 +77,32 @@ return (
             </div>
         </div>
 
+        {/* Assess Button */}
+        <div className="flex h-full justify-center items-center w-20">
+            <Button
+                variant="ghost"
+                onClick={onAssess}
+                disabled={!active}
+                className="text-gray-600 hover:text-black"
+            >
+                <div className="flex flex-col items-center">
+                    {active ? (
+                        <GraduationCap />
+                    ) : (
+                        <GraduationCap />
+                    )}
+                    <p className="text-xs mt-1">Assess</p>
+                </div>
+            </Button>
+        </div>
+        
         {/* End Button */}
         <div className="flex h-full justify-center items-center w-20">
             <Button
                 variant="ghost"
                 onClick={onStop}
                 disabled={!active}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-600 hover:text-black"
             >
                 <div className="flex flex-col items-center">
                     {active ? (
