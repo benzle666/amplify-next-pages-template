@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import PricingPanel , { PricingPlan } from "@/components/ui/PricingPanel";
+import CopyPalate from "@/components/ui/CopyPalate";
 
 const plans: PricingPlan[] = [
   {
@@ -102,6 +103,32 @@ export default function HomePage() {
               In any language, in any format.
             </div>
             <Image src="/logo.png" width={400} height={400} alt="image"/>
+          </div>
+          <div className="flex justify-center items-center h-120 mb-20">
+            <div className="flex flex-col">
+              <div 
+                className="text-3xl font-extrabold text-white mb-8"
+                style={{
+                    textShadow: `
+                      2px 2px 0 black,
+                      -2px 2px 0 black,
+                      2px -2px 0 black,
+                      -2px -2px 0 black
+                    `
+                  }}>
+                Get your prompt!
+              </div>
+              <div className="text-bold mb-8 pr-8">
+                Honestly, you can practice on ChatGPT or any platform. Just copy these materials. Only subcript for our product when you ran out of credit!
+              </div>
+            </div>
+            <CopyPalate
+              tabs={[
+                { label: "IELTS", content: "console.log('Hello World');" },
+                { label: "TOEIC", content: "print('Hello World')" },
+                { label: "Casual", content: "<h1>Hello World</h1>" },
+              ]}
+            />
           </div>
           <div className="flex flex-col justify-center items-center h-120 mb-20 text-3xl text-bold">
             Pricing
