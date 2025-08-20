@@ -22,7 +22,7 @@ const PricingPanel: React.FC<PricingPanelProps> = ({ plans }) => {
       {plans.map((plan, index) => (
         <div
           key={index}
-          className={`rounded-2xl border p-6 shadow-sm transition hover:shadow-md ${
+          className={`flex flex-col justify-between min-h-100 rounded-2xl border p-6 shadow-sm transition hover:shadow-md ${
             plan.isCurrent
               ? 'border-green-600 bg-green-50'
               : plan.isPopular
@@ -30,23 +30,25 @@ const PricingPanel: React.FC<PricingPanelProps> = ({ plans }) => {
               : 'border-gray-200'
           }`}
         >
-          {plan.isCurrent && (
-            <span className="inline-block mb-2 px-2 py-1 text-xs font-semibold text-green-800 bg-green-200 rounded-full">
-              Your Current Plan
-            </span>
-          )}
+          <div>
+            {plan.isCurrent && (
+              <span className="inline-block mb-2 px-2 py-1 text-xs font-semibold text-green-800 bg-green-200 rounded-full">
+                Your Current Plan
+              </span>
+            )}
 
-          <h3 className="text-xl font-semibold">{plan.name}</h3>
-          <p className="text-3xl font-bold mt-2">{plan.price}</p>
-          <p className="text-sm text-gray-500 mt-1">{plan.description}</p>
+            <h3 className="text-xl font-semibold">{plan.name}</h3>
+            <p className="text-3xl font-bold mt-2">{plan.price}</p>
+            <p className="text-sm text-gray-500 mt-1">{plan.description}</p>
 
-          <ul className="mt-4 space-y-2">
-            {plan.features.map((feature, i) => (
-              <li key={i} className="text-sm text-gray-700">
-                • {feature}
-              </li>
-            ))}
-          </ul>
+            <ul className="mt-4 space-y-2">
+              {plan.features.map((feature, i) => (
+                <li key={i} className="text-sm text-gray-700">
+                  • {feature}
+                </li>
+              ))}
+            </ul>
+          </div>
 
           <button
             onClick={plan.onCTAClick}

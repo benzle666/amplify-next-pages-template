@@ -60,8 +60,9 @@ const SettingPage: NextPageWithLayout = () => {
             <span className="text-gray-700">App Language</span>
             <select className="border rounded px-2 py-1">
               <option>English</option>
-              <option>Tiếng Việt</option>
-              <option>Español</option>
+              <option>Chinese</option>
+              <option>Spanish</option>
+              <option>Vietnamese</option>
             </select>
           </div>
 
