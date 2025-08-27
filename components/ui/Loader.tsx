@@ -36,6 +36,8 @@ const Loader = forwardRef<LoaderHandle, LoaderProps>(({ stepSize = 10 }, ref) =>
   );
 });
 
+Loader.displayName = "Loader";
+
 export default Loader;
 
 // import React, { useRef } from "react";
