@@ -1,5 +1,5 @@
 import type { Schema } from "../../data/resource"
-import { env } from '$amplify/env/say-hello';
+import { env } from '$amplify/env/get-test-content';
 import OpenAI from "openai";
 
 
