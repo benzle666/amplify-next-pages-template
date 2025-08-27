@@ -10,6 +10,7 @@ type Props = {
     onRepeat: () => void
     onAssess: () => void
     active: boolean
+    isLoading: boolean
 }
 
 export default function SessionControls({
@@ -20,6 +21,7 @@ export default function SessionControls({
     onRepeat,
     onAssess,
     active,
+    isLoading
 }: Props) {
 
 return (
@@ -31,7 +33,7 @@ return (
                 variant="ghost"
                 size="icon"
                 onClick={onSettings}
-                className="text-gray-600 hover:text-black"
+                className="text-gray-600 hover:text-black cursor-pointer"
             >
                 <div className="flex flex-col items-center">
                     <CircleQuestionMark />
@@ -46,7 +48,7 @@ return (
                 variant="ghost"
                 size="icon"
                 onClick={onRepeat}
-                className="text-gray-600 hover:text-black"
+                className="text-gray-600 hover:text-black cursor-pointer"
             >
                 <div className="flex flex-col items-center">
                     <SkipBack />
@@ -60,7 +62,8 @@ return (
             <div className="absolute left-1/2 -translate-x-1/2 z-10">
                 <Button
                     onClick={active ? onNext : onStart}
-                    className="bg-orange-400 hover:bg-orange-500 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-md"
+                    className="bg-orange-400 hover:bg-orange-500 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-md cursor-pointer disabled:cursor-wait"
+                    disabled={isLoading}
                 >
                     {active ? (
                         <div className="flex flex-col items-center">
@@ -83,7 +86,7 @@ return (
                 variant="ghost"
                 onClick={onAssess}
                 disabled={!active}
-                className="text-gray-600 hover:text-black"
+                className="text-gray-600 hover:text-black cursor-pointer"
             >
                 <div className="flex flex-col items-center">
                     {active ? (
@@ -102,7 +105,7 @@ return (
                 variant="ghost"
                 onClick={onStop}
                 disabled={!active}
-                className="text-gray-600 hover:text-black"
+                className="text-gray-600 hover:text-black cursor-pointer"
             >
                 <div className="flex flex-col items-center">
                     {active ? (

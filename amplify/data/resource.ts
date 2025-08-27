@@ -1,5 +1,6 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 import { getEmphemeral } from "../functions/get-emphemeral/resource";
+import { getTestContent } from "../functions/get-test-content/resource";
 
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
@@ -23,6 +24,15 @@ const schema = a.schema({
     .returns(a.string())
     .authorization(allow => [allow.authenticated()])
     .handler(a.handler.function(getEmphemeral)),
+
+  getTestContent: a
+    .query()
+    .arguments({
+      prompt: a.string(),
+    })
+    .returns(a.string())
+    .authorization(allow => [allow.authenticated()])
+    .handler(a.handler.function(getTestContent)),
 });
 
 export type Schema = ClientSchema<typeof schema>;

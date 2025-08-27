@@ -104,7 +104,7 @@ export default function HomePage() {
             </div>
             <Image src="/logo.png" width={400} height={400} alt="image"/>
           </div>
-          <div className="flex justify-center items-center h-120 mb-20">
+          {/* <div className="flex justify-center items-center h-120 mb-20">
             <div className="flex flex-col">
               <div 
                 className="text-3xl font-extrabold text-white mb-8"
@@ -129,7 +129,7 @@ export default function HomePage() {
                 { label: "Casual", content: "<h1>Hello World</h1>" },
               ]}
             />
-          </div>
+          </div> */}
           <div className="flex flex-col justify-center items-center h-120 mb-20 text-3xl text-bold">
             Pricing
             <PricingPanel plans={plans} />

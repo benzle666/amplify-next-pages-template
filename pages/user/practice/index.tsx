@@ -3,10 +3,9 @@ import { generateClient } from "aws-amplify/data";
 import { RealtimeAgent, RealtimeSession } from "@openai/agents/realtime";
 import type { Schema } from "@/amplify/data/resource";
 import type { NextPageWithLayout } from '@/pages/_app';
-import { CasualAcademicPrompt, IELTSPrompt } from "@/services/prompts/realtimePrompts";
+import { CasualAcademicPrompt, IELTSPrompt, IELTSUserMaterialPart2Prompt } from "@/services/prompts/realtimePrompts";
 import Image from "next/image";
 import Link from "next/link";
-
 
 import MyAuth from '@/components/layout/MyAuth';
 import Header from "@/components/layout/Header";
@@ -16,6 +15,8 @@ import Selection from "@/components/ui/Selection";
 import SessionControls from "@/components/ui/SessionControls";
 import FlipCard from "@/components/ui/ContentHide";
 import Timer, { TimerHandle } from "@/components/ui/Timer";
+import LargeTimer from "@/components/ui/LargeTimer";
+import Loader, { LoaderHandle } from "@/components/ui/Loader";
 
 import {
   Accordion,
@@ -33,7 +34,6 @@ type EnergyState = "charged" | "charging" | "claim" | "none";
 // Options select
 const formatOptions = [
   { label: "IELTS", value: "ielts" },
-  { label: "TOEIC", value: "toeic", badge: "beta" },
   { label: "Casual", value: "casual" },
 ]
 
@@ -63,7 +63,7 @@ const getKey = async () => {
       if (apiResult.data) {
         return JSON.parse(apiResult.data)
       } else {
-        console.error("No data in apiResult");
+        console.error("No data in getKey apiResult");
       }
     })
     .catch(err => {
@@ -71,16 +71,32 @@ const getKey = async () => {
     });
 }
 
+const getContent = async (promptContent : string) => {
+  return client.queries.getTestContent({ prompt: promptContent })
+    .then(apiResult => {
+      if (apiResult) {
+        console.log(apiResult.data)
+        return apiResult.data;
+      } else {
+        console.error("No data in getContent apiResult");
+      }
+    })
+    .catch(err => {
+      console.error("Error fetching:", err);
+    });
+}
+
 // Realtime API
 let session: RealtimeSession | null = null;
 
 type sessionArg = {
-  selectedFormat: string, 
+  selectedFormat: string,
+  generatedContent: string | null,
   selectedVoice: string, 
-  selectedSpeed: string
+  selectedSpeed: string,
 }
 
-const getSession = async ({ selectedFormat, selectedVoice, selectedSpeed }: sessionArg) => {
+const getSession = async ({ selectedFormat, generatedContent, selectedVoice, selectedSpeed }: sessionArg) => {
   const data = await getKey();
 
   let agent: RealtimeAgent;
@@ -91,25 +107,14 @@ const getSession = async ({ selectedFormat, selectedVoice, selectedSpeed }: sess
     case 'ielts':
       agent = new RealtimeAgent({
         name: 'IELTS Examiner',
-        instructions:
-          IELTSPrompt,
+        instructions: IELTSPrompt + generatedContent,
       });
       break;
 
-    case 'toeic':
-      agent = new RealtimeAgent({
-        name: 'TOEIC Examiner',
-        instructions:
-          'You are an TOEIC examiner. Guide the user through the test.',
-      });
-      break;
-
-    case 'casual':
     default:
       agent = new RealtimeAgent({
         name: 'Conversation Tutor',
-        instructions:
-          CasualAcademicPrompt,
+        instructions: CasualAcademicPrompt,
       });
       break;
   }
@@ -180,17 +185,20 @@ const endSession = () => {
 
 const PracticePage: NextPageWithLayout = () => {
   const [active, setActive] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false)
   const [isEnergyModalOpen, setEnergyModalOpen] = useState(false)
   const [selectedFormat, setSelectedFormat] = useState<string>("ielts")
   const [selectedVoice, setSelectedVoice] = useState<string>("alloy")
   const [selectedSpeed, setSelectedSpeed] = useState<string>("normal")
   const [inputValue, setInputValue] = useState<string>("")
-  const [energyState, setEnergyState] = useState<EnergyState>("none")
+  const [energyState, setEnergyState] = useState<EnergyState>("charging")
+  const [userMaterial, setUserMaterial] = useState<string | null>(null);
 
   
   const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<TimerHandle>(null)
+  const loaderRef = useRef<LoaderHandle>(null);
 
   const triggerTimer = () => {
     timerRef.current?.start()
@@ -225,22 +233,68 @@ const PracticePage: NextPageWithLayout = () => {
     return () => window.removeEventListener("keydown", handleKeydown);
   }, []);
 
+  const checkEnergy = async () => {
+    // Will update energy state here
+    
+  }
+  checkEnergy()
   
   const handleStart = async () => {
-    await getSession({ selectedFormat, selectedVoice, selectedSpeed });
+    loaderRef.current?.next();
+    setIsLoading(true)
+    const generatedContent = await getContent(IELTSUserMaterialPart2Prompt) ?? null;
+    loaderRef.current?.next();
+
+    console.log("Is examiner material loaded" + generatedContent)
+    setUserMaterial(generatedContent)
+    try {
+      console.log("Start agent")
+      await getSession({ selectedFormat, generatedContent, selectedVoice, selectedSpeed });
+      loaderRef.current?.next();
+    } catch (error) {
+      console.log(error)
+      setActive(false)
+      setIsLoading(false)
+      loaderRef.current?.reset();
+      return;
+    }
     setActive(true);
     triggerTimer()
+    setIsLoading(false)
+    loaderRef.current?.finish();
   };
   
   const handleStop = async () => {
+    setUserMaterial(null)
     endSession();
+    loaderRef.current?.reset();
     setActive(false);
   };
 
   return (
     <div className="flex flex-col h-screen">
       <Header>
-        <div className="px-2" onClick={() => setEnergyModalOpen(true)}>
+        <div className="flex items-center px-2 hover:bg-yellow-200 cursor-pointer" onClick={() => setEnergyModalOpen(true)}>
+          {
+            (energyState === "charging") && (
+              <div className="flex flex-col items-center text-black text-xs w-32">
+                <div>Next energy in</div>
+                <LargeTimer
+                  initialSeconds={1000000}
+                  onTimeUp={() => alert("Time's up!")}
+                  formatUnits={["days", "hours", "minutes", "seconds"]}
+                  autoStart
+                />
+              </div>
+            )
+          }
+          {
+            (energyState === "claim") && (
+              <div className="px-4">
+                Claim now
+              </div>
+            )
+          }
           <EnergyIcon energyState={energyState} />
         </div>
         <Link className="px-2" href="/user/setting">Setting</Link>
@@ -250,9 +304,8 @@ const PracticePage: NextPageWithLayout = () => {
         <div className="flex-1 overflow-y-auto h-100">
           {/* long content here will scroll if needed */}
           <div className="h-6"></div>
-          <FlipCard title="My Book">
-            <p>This is the hidden content revealed when you click the cover.  
-              Could be a description, stats, or extra details.</p>
+          <FlipCard title="My Book" opened={true}>
+            <p>Well come to TalkAura</p>
           </FlipCard>
           <FlipCard title="My Book">
             <Image 
@@ -262,10 +315,18 @@ const PracticePage: NextPageWithLayout = () => {
               alt="Content"
             />
           </FlipCard>
+          {userMaterial && (
+            <FlipCard title="My Book">
+              <p>{userMaterial}</p>
+            </FlipCard>
+          )}
         </div>
 
         {/* Bottom controls */}
         <div className="flex flex-col items-center space-y-4">
+          <div className="w-100 -mb-2">
+            <Loader ref={loaderRef} stepSize={4}/>
+          </div>
           {/* SelectBars */}
           <div className="w-100 flex justify-center mt-6">
             <div className="flex gap-4">
@@ -287,7 +348,7 @@ const PracticePage: NextPageWithLayout = () => {
                   className="w-full bg-transparent text-sm font-medium text-gray-700 placeholder-gray-400 focus:outline-none"
                 />
                 <div 
-                  className="flex items-center justify-center shrink-0 w-8 h-8 translate-x-3 border border-gray-200 rounded-full shadow-sm hover:bg-gray-50 text-gray-600 hover:text-black" 
+                  className="flex items-center justify-center shrink-0 w-8 h-8 translate-x-3 border border-gray-200 rounded-full shadow-sm hover:bg-gray-50 text-gray-700 hover:text-black cursor-pointer" 
                   onClick={() => session?.sendMessage("The topic that I want to talk about is:" + inputValue)}
                 >
                   <Send className="-translate-x-0.25 translate-y-0.5" />
@@ -306,6 +367,7 @@ const PracticePage: NextPageWithLayout = () => {
             onStop={handleStop}
             onSettings={() => setModalOpen(true)}
             active={active}
+            isLoading={isLoading}
           />
         </div>
         <div className="flex justify-center pb-6">

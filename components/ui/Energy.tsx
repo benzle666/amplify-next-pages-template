@@ -28,7 +28,7 @@ export default function EnergyIcon({ energyState }: EnergyIconProps) {
 
     case "charging":
       return (
-        <div className="animate-pulse text-gray-600">
+        <div className="animate-pulse text-orange-400">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"

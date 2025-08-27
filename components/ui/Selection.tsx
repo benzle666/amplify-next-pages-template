@@ -91,7 +91,7 @@ export default function Selection({
           ref={buttonRef}
           type="button"
           onClick={() => setOpen(!open)}
-          className="inline-flex h-10 justify-between items-center w-full rounded-full border border-gray-200 shadow-sm px-4 py-1.5 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none"
+          className="inline-flex h-10 justify-between items-center w-full rounded-full border border-gray-200 shadow-sm px-4 py-1.5 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none cursor-pointer"
         >
           {multiple
             ? (selected as string[]).length > 0
