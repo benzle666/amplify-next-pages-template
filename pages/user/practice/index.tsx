@@ -6,6 +6,7 @@ import type { NextPageWithLayout } from '@/pages/_app';
 import { CasualAcademicPrompt, IELTSPrompt, IELTSUserMaterialPart2Prompt } from "@/services/prompts/realtimePrompts";
 import Image from "next/image";
 import Link from "next/link";
+import Head from 'next/head'
 
 import MyAuth from '@/components/layout/MyAuth';
 import Header from "@/components/layout/Header";
@@ -273,6 +274,10 @@ const PracticePage: NextPageWithLayout = () => {
 
   return (
     <div className="flex flex-col h-screen">
+      <Head>
+        <title>Practice</title>
+        <meta name="google-adsense-account" content="ca-pub-2025977262882025" />
+      </Head>
       <Header>
         <div className="flex items-center px-2 hover:bg-yellow-200 cursor-pointer" onClick={() => setEnergyModalOpen(true)}>
           {
