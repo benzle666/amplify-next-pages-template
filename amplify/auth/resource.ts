@@ -19,9 +19,9 @@ export const auth = defineAuth({
       },
       callbackUrls: [
         'http://localhost:3000/user/practice',
-        'https://main.d37wsic70iipdp.amplifyapp.com/user/practice'
+        'https://thetalkaura.com/user/practice'
       ],
-      logoutUrls: ['http://localhost:3000/', 'https://main.d37wsic70iipdp.amplifyapp.com/'],
+      logoutUrls: ['http://localhost:3000/', 'https://thetalkaura.com/'],
     },
   },
 });
